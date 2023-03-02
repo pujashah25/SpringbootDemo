@@ -1,9 +1,8 @@
 package com.springbootdemo.employeemanagement.service;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -14,21 +13,22 @@ import com.springbootdemo.employeemanagement.model.Employee;
 import com.springbootdemo.employeemanagement.repository.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmployeeService{
 	
 	@Autowired
-	private EmployeeRepository employeeRepository;
+	private final  EmployeeRepository employeeRepository;
 	
-	public void saveEmployee(Employee employee) {
-		this.employeeRepository.save(employee);
+	public Employee saveEmployee(Employee employee) {
+		return this.employeeRepository.save(employee);
 	}
 
-	public Employee getEmployeeByIdOrName(Long id, String firstName, String lastName) {
-		Optional<Employee> employee = employeeRepository.findByEmpIdOrFirstNameOrLastName(id,firstName,lastName);
-		System.out.println("Employee::"+employee+"::"+firstName);
+	public Employee getEmployeeById(Long id) {
+		Optional<Employee> employee = employeeRepository.findById(id);
 		if(employee.isPresent()) {
 			return employee.get();
 		}else {
@@ -36,25 +36,39 @@ public class EmployeeService{
 		}
 	}
 	
-public Employee getEmployeeByMaxSalary() {
-		
-		List<Employee> employees = employeeRepository.findAll();
-		
-		Comparator<Employee> comparator = Comparator.comparing( Employee::getSalary );
-		
-		Employee maxSalaryEmployee = employees.stream().max(comparator).get();
-
-		return maxSalaryEmployee;
+	public List<Employee> getEmployeeByName(String name) {
+		List<Employee> employees = employeeRepository.searchByFirstAndOrLastName(name);
+		if(employees.size() > 0) {
+			return employees;
+		}else {
+			throw new RuntimeException("Employee not found for name : "+name);
+		}
+	}
+	
+	public List<Employee> getEmployeeByMaxSalary() {		
+		List<Employee> employees = employeeRepository.findAll();		
+		// Find max salary 
+		BigDecimal highestSalary = employees.stream()
+					.max(Comparator.comparing(Employee::getSalary))
+					.map(Employee::getSalary).get();		
+		// Filter the list of employee that matches that salary
+		List<Employee> maxSalaryEmployees = employees.stream()
+					.filter(e ->e.getSalary() == highestSalary)
+					.collect(Collectors.toList());		
+		return maxSalaryEmployees;
 	}
 
-	public Employee getEmployeeByMinSalary() {
-		List<Employee> employees = employeeRepository.findAll();
-		
-		Comparator<Employee> comparator = Comparator.comparing( Employee::getSalary );
-		
-		Employee minSalaryEmployee = employees.stream().min(comparator).get();
-
-		return minSalaryEmployee;
+	public List<Employee> getEmployeeByMinSalary() {
+		List<Employee> employees = employeeRepository.findAll();		
+		// Find min salary 
+		BigDecimal lowestSalary = employees.stream()
+					.min(Comparator.comparing(Employee::getSalary))
+					.map(Employee::getSalary).get();		
+		// Filter the list of employee that matches that salary
+		List<Employee> minSalaryEmployees = employees.stream()
+					.filter(e ->e.getSalary() == lowestSalary)
+					.collect(Collectors.toList());
+		return minSalaryEmployees;
 	}
 
 

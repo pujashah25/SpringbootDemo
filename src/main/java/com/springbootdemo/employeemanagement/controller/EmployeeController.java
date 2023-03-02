@@ -31,18 +31,23 @@ public class EmployeeController {
 		employeeService.saveEmployee(employee);
 	}
 	
-	@GetMapping("/findemployee")
-	public Employee getEmployeeById(@RequestParam(required =  false) Long id, @RequestParam(required =  false) String firstName, @RequestParam(required =  false) String lastName) {
-		return employeeService.getEmployeeByIdOrName(id,firstName,lastName);
+	@GetMapping
+	public Employee getEmployeeById(@RequestParam Long id) {
+		return employeeService.getEmployeeById(id);
+	}
+	
+	@GetMapping("/findemployeeByName")
+	public List<Employee> getEmployeeByName(@RequestParam String name) {
+		return employeeService.getEmployeeByName(name);
 	}
 	
 	@GetMapping("/findemployeeByMaxSalary")
-	public Employee getEmployeeByMaxSalary() {
+	public List<Employee> getEmployeeByMaxSalary() {
 		return employeeService.getEmployeeByMaxSalary();
 	}
 	
 	@GetMapping("/findemployeeByMinSalary")
-	public Employee getEmployeeByMinSalary() {
+	public List<Employee> getEmployeeByMinSalary() {
 		return employeeService.getEmployeeByMinSalary();
 	}
 
