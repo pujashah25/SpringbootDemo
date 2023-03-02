@@ -69,30 +69,5 @@ public class EmployeeService{
 					.filter(e ->e.getSalary() == lowestSalary)
 					.collect(Collectors.toList());
 		return minSalaryEmployees;
-	}
-
-
-	/*public List<Employee> getEmployeesByMaxSalary() {
-		
-		List<Employee> employees = employeeRepository.findAll();
-		
-		Map<Long,Employee> mapEmployeesByDep = employees.stream()
-							.collect(Collectors.groupingBy(e -> e.getDepartment().getDepId(),
-									Collectors.collectingAndThen(Collectors.maxBy(
-									Comparator.comparingInt(e -> e.getSalary().intValue())), Optional::get)));
-		
-		System.out.println("mapEmployeesByDep::"+mapEmployeesByDep.);
-									
-									
-		
-		List<Employee> maxSalaryEmployees = new ArrayList<Employee>();
-
-		return maxSalaryEmployees;
-	}*/
-
-	public List<Employee> getEmployeesByMinSalary() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	}	
 }
